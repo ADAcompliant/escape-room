@@ -1,0 +1,1304 @@
+My Drive
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outbreak on Station 7</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap');
+
+  :root {
+    --space-black: #050a0f;
+    --deep-space: #080e18;
+    --hull: #0d1b2a;
+    --console: #0a2a1a;
+    --alert-red: #ff2d2d;
+    --alert-amber: #ffb800;
+    --alert-green: #00ff88;
+    --plasma-blue: #00c8ff;
+    --dim-blue: #1a4a6a;
+    --text-primary: #e8f4ff;
+    --text-dim: #6a9ab0;
+    --text-mono: #00ff88;
+    --panel-border: rgba(0,200,255,0.2);
+    --panel-bg: rgba(8,20,35,0.95);
+    --correct-glow: 0 0 20px rgba(0,255,136,0.4);
+    --wrong-glow: 0 0 20px rgba(255,45,45,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--space-black);
+    color: var(--text-primary);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Starfield */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 8%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 12%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 50%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(2px 2px at 15% 55%, rgba(0,200,255,0.3) 0%, transparent 100%),
+      radial-gradient(2px 2px at 60% 35%, rgba(0,200,255,0.2) 0%, transparent 100%),
+      radial-gradient(2px 2px at 88% 88%, rgba(0,200,255,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* CRT scanline texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Scan beam */
+  .crt-scan-beam {
+    position: fixed;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(0,200,255,0.06),
+      rgba(0,200,255,0.15),
+      rgba(0,200,255,0.06),
+      transparent
+    );
+    animation: scan-sweep 6s linear infinite;
+    top: -20px;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .crt-scan-glow {
+    position: fixed;
+    left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(0,200,255,0.02),
+      rgba(0,200,255,0.04),
+      rgba(0,200,255,0.02),
+      transparent
+    );
+    animation: scan-sweep 6s linear infinite;
+    top: -60px;
+    pointer-events: none;
+    z-index: 3;
+  }
+  @keyframes scan-sweep {
+    from { top: -60px; }
+    to   { top: 100vh; }
+  }
+
+  /* Occasional flicker */
+  .crt-flicker {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,200,255,0.015);
+    animation: crt-flicker-anim 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 3;
+  }
+  @keyframes crt-flicker-anim {
+    0%,100%,94%,96% { opacity: 1; }
+    100% { opacity: 10; }
+    95.5% { opacity: 1; }
+  }
+
+  .screen {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+  .screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    text-align: center;
+    gap: 28px;
+  }
+
+  .station-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 900;
+    color: var(--plasma-blue);
+    text-shadow: 0 0 30px rgba(0,200,255,0.6), 0 0 60px rgba(0,200,255,0.2);
+    letter-spacing: 4px;
+    animation: pulse-logo 3s ease-in-out infinite;
+  }
+  @keyframes pulse-logo {
+    0%,100% { text-shadow: 0 0 30px rgba(0,200,255,0.6), 0 0 60px rgba(0,200,255,0.2); }
+    50% { text-shadow: 0 0 50px rgba(0,200,255,0.9), 0 0 100px rgba(0,200,255,0.4); }
+  }
+
+  .subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.7rem, 2vw, 1rem);
+    color: var(--text-dim);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+  }
+
+  .alert-banner {
+    background: linear-gradient(135deg, rgba(255,45,45,0.15), rgba(255,184,0,0.1));
+    border: 1px solid rgba(255,45,45,0.4);
+    border-radius: 4px;
+    padding: 16px 28px;
+    max-width: 680px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--alert-amber);
+    letter-spacing: 1px;
+    animation: flicker 4s ease-in-out infinite;
+  }
+  @keyframes flicker {
+    0%,100%,98% { opacity: 1; }
+    99% { opacity: 0.7; }
+  }
+
+  .briefing-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 28px 36px;
+    max-width: 720px;
+    text-align: left;
+    line-height: 1.8;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    box-shadow: 0 0 40px rgba(0,200,255,0.05);
+  }
+
+  .briefing-panel h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--plasma-blue);
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--panel-border);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+  }
+  .legend-arrow { color: var(--text-dim); }
+  .legend-clinical { color: var(--alert-amber); font-size: 0.72rem; }
+
+  .station-map {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 720px;
+  }
+
+  .map-station {
+    background: rgba(13,27,42,0.9);
+    border: 1px solid var(--dim-blue);
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-align: center;
+  }
+  .map-station .emoji { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+  .map-arrow { color: var(--dim-blue); font-size: 1.2rem; }
+
+  .btn {
+    background: transparent;
+    border: 2px solid var(--plasma-blue);
+    color: var(--plasma-blue);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    padding: 14px 40px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--plasma-blue);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+  .btn:hover::before { transform: translateX(0); }
+  .btn:hover { color: var(--space-black); }
+
+  .btn-secondary {
+    border-color: var(--text-dim);
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    padding: 10px 24px;
+  }
+  .btn-secondary::before { background: var(--text-dim); }
+  .btn-secondary:hover { color: var(--space-black); }
+
+  /* ── QUESTION SCREEN ── */
+  #question-screen {
+    gap: 0;
+    justify-content: flex-start;
+    padding: 0;
+  }
+
+  .hud-bar {
+    width: 100%;
+    background: rgba(5,10,15,0.98);
+    border-bottom: 1px solid var(--panel-border);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .hud-left {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+  .hud-station-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    color: var(--plasma-blue);
+    letter-spacing: 2px;
+  }
+
+  .hud-progress {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .progress-pip {
+    width: 28px;
+    height: 4px;
+    background: var(--dim-blue);
+    border-radius: 2px;
+    transition: background 0.4s;
+  }
+  .progress-pip.done { background: var(--alert-green); }
+  .progress-pip.current { background: var(--plasma-blue); animation: pip-pulse 1.5s ease-in-out infinite; }
+  @keyframes pip-pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .score-display {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  .score-display span { color: var(--alert-green); font-size: 1rem; }
+
+  .question-container {
+    flex: 1;
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .station-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .station-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(0,200,255,0.4));
+  }
+
+  .station-info h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: var(--plasma-blue);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .station-info .clinical-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--alert-amber);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .scenario-box {
+    background: rgba(10,42,26,0.4);
+    border: 1px solid rgba(0,255,136,0.15);
+    border-left: 3px solid var(--alert-amber);
+    border-radius: 4px;
+    padding: 18px 22px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #c8e8d0;
+  }
+  .scenario-box .scenario-label {
+    font-size: 0.65rem;
+    color: var(--alert-amber);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* Epic BPA mockup */
+  .bpa-mockup {
+    background: #1a1a1a;
+    border: 2px solid #444;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .bpa-header {
+    background: #d4a017;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1a1a1a;
+    font-weight: bold;
+    font-size: 0.85rem;
+  }
+  .bpa-icon {
+    width: 28px;
+    height: 28px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .bpa-body {
+    padding: 12px 14px;
+    color: #ccc;
+    line-height: 1.6;
+    font-size: 0.77rem;
+    background: #222;
+  }
+  .bpa-sirs-detail {
+    color: #aaa;
+    font-size: 0.72rem;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #333;
+  }
+  .bpa-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 14px;
+    background: #1e1e1e;
+    border-top: 1px solid #333;
+  }
+  .bpa-btn {
+    background: #2a5298;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    border-radius: 3px;
+    cursor: default;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .bpa-btn.red { background: #8b2020; }
+
+  .question-text {
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    line-height: 1.7;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    background: rgba(13,27,42,0.8);
+    border: 1px solid var(--dim-blue);
+    border-radius: 6px;
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    width: 100%;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--plasma-blue);
+    background: rgba(0,200,255,0.08);
+    transform: translateX(4px);
+  }
+  .option-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--plasma-blue);
+    flex-shrink: 0;
+    margin-top: 2px;
+    min-width: 24px;
+  }
+  .option-btn.correct {
+    border-color: var(--alert-green);
+    background: rgba(0,255,136,0.08);
+    box-shadow: var(--correct-glow);
+  }
+  .option-btn.correct .option-label { color: var(--alert-green); }
+  .option-btn.wrong {
+    border-color: var(--alert-red);
+    background: rgba(255,45,45,0.08);
+    box-shadow: var(--wrong-glow);
+  }
+  .option-btn.wrong .option-label { color: var(--alert-red); }
+  .option-btn.dimmed { opacity: 0.4; }
+  .option-btn:disabled { cursor: default; transform: none; }
+
+  .feedback-panel {
+    display: none;
+    border-radius: 6px;
+    padding: 18px 22px;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    animation: fade-in 0.4s ease;
+  }
+  @keyframes fade-in { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+  .feedback-panel.correct-fb {
+    display: block;
+    background: rgba(0,255,136,0.07);
+    border: 1px solid rgba(0,255,136,0.3);
+    color: #b0ffda;
+  }
+  .feedback-panel.wrong-fb {
+    display: block;
+    background: rgba(255,45,45,0.07);
+    border: 1px solid rgba(255,45,45,0.3);
+    color: #ffb0b0;
+  }
+  .feedback-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .correct-fb .feedback-label { color: var(--alert-green); }
+  .wrong-fb .feedback-label { color: var(--alert-red); }
+
+  .next-btn-wrap { display: flex; justify-content: flex-end; }
+
+  /* ── STATION TRANSITION ── */
+  #station-transition {
+    text-align: center;
+    gap: 24px;
+  }
+  .transition-icon { font-size: 5rem; animation: float 3s ease-in-out infinite; }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .transition-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    color: var(--alert-green);
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(0,255,136,0.5);
+  }
+  .transition-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    max-width: 500px;
+  }
+  .next-station-preview {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 20px 32px;
+    text-align: center;
+  }
+  .next-station-preview .label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .next-station-preview .name {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    color: var(--plasma-blue);
+    letter-spacing: 2px;
+  }
+  .next-station-preview .clinical {
+    font-size: 0.78rem;
+    color: var(--alert-amber);
+    margin-top: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 2px;
+  }
+
+  /* ── FINAL SCREEN ── */
+  #final-screen {
+    text-align: center;
+    gap: 28px;
+  }
+  .final-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    font-weight: 900;
+    letter-spacing: 4px;
+    animation: pulse-logo 2s ease-in-out infinite;
+  }
+  .final-title.success { color: var(--alert-green); text-shadow: 0 0 30px rgba(0,255,136,0.6); }
+  .score-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 32px 48px;
+    min-width: 320px;
+  }
+  .score-card .big-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--alert-green);
+    line-height: 1;
+    text-shadow: var(--correct-glow);
+  }
+  .score-card .score-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    margin-top: 8px;
+  }
+  .score-breakdown {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .breakdown-row .val { color: var(--text-primary); }
+  .instructor-note {
+    background: rgba(255,184,0,0.06);
+    border: 1px solid rgba(255,184,0,0.2);
+    border-radius: 6px;
+    padding: 16px 22px;
+    max-width: 680px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--alert-amber);
+    line-height: 1.7;
+    text-align: left;
+  }
+  .instructor-note strong { display: block; letter-spacing: 3px; margin-bottom: 8px; font-size: 0.65rem; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--space-black); }
+  ::-webkit-scrollbar-thumb { background: var(--dim-blue); border-radius: 3px; }
+
+  /* Utility */
+  .text-mono { font-family: 'Share Tech Mono', monospace; }
+  .text-dim { color: var(--text-dim); }
+  .mt-4 { margin-top: 16px; }
+  .divider { width: 100%; height: 1px; background: var(--panel-border); }
+
+  @media (max-width : 1080px ){
+    .legend { grid-template-columns: 1fr; }
+    .station-map { gap: 4px; }
+    .map-station { padding: 8px 10px; font-size: 0.65rem; }
+    .briefing-panel { padding: 20px; }
+    .score-card { padding: 24px; min-width: unset; width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="crt-scan-glow"></div>
+<div class="crt-scan-beam"></div>
+<div class="crt-flicker"></div>
+
+<!-- ══════════════════════════════════════════════
+     INTRO SCREEN
+══════════════════════════════════════════════ -->
+<div id="intro" class="screen active">
+  <div class="station-logo">STATION 7</div>
+  <div class="subtitle">Medical Bay Emergency Protocol // Outbreak Containment</div>
+
+  <div class="alert-banner">
+    ⚠ CRITICAL ALERT: Primary AI Clinical Decision System offline. Manual protocol engagement required. Crew safety depends on your expertise.
+  </div>
+
+  <div class="briefing-panel">
+    <h3>// Mission Briefing</h3>
+    <p>You are the senior nurse on duty in <strong>Station 7's Medical Bay</strong>. Station 7's primary AI — a next-generation clinical monitoring system far more advanced than standard protocols — has gone offline. The medical bay has automatically fallen back to its baseline alert system: <strong>KP HealthConnect's Sepsis Best Practice Alert (BPA) system</strong>. It will flag overdue actions for any crew member on the sepsis pathway — but only if you know how to interpret its alerts and respond correctly. Without it, crew members showing early signs of sepsis could deteriorate quickly! </p>
+    <p class="mt-4">Your mission: work through each Medical Bay section, interpret the clinical situation correctly, and take the right action. Earn access codes by answering correctly. Use all codes to unlock the emergency exit before Station 7 loses orbit.</p>
+
+    <div class="divider mt-4"></div>
+    <h3 class="mt-4">// Station Map</h3>
+  </div>
+
+  <div class="station-map">
+    <div class="map-station">
+      <span class="emoji">🛸</span>
+      Crew Bay Alpha<br>
+      <span class="legend-clinical">SIRS & Time Zero</span>
+    </div>
+    <div class="map-arrow">→</div>
+    <div class="map-station">
+      <span class="emoji">🧬</span>
+      Bio-Lab Seven<br>
+      <span class="legend-clinical">Lactic Acid & Blood Cultures</span>
+    </div>
+    <div class="map-arrow">→</div>
+    <div class="map-station">
+      <span class="emoji">💊</span>
+      Pharmacy Deck<br>
+      <span class="legend-clinical">Antibiotics & IV Fluids</span>
+    </div>
+    <div class="map-arrow">→</div>
+    <div class="map-station">
+      <span class="emoji">🚨</span>
+      Command Bridge<br>
+      <span class="legend-clinical">MD Escalation & Vasopressors</span>
+    </div>
+    <div class="map-arrow">→</div>
+    <div class="map-station">
+      <span class="emoji">🔐</span>
+      The Airlock<br>
+      <span class="legend-clinical">Final Challenge — Escape!</span>
+    </div>
+  </div>
+
+  <button class="btn" onclick="startGame()">▶ INITIATE PROTOCOL</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     QUESTION SCREEN
+══════════════════════════════════════════════ -->
+<div id="question-screen" class="screen">
+  <div class="hud-bar">
+    <div class="hud-left">
+      <div class="hud-station-name" id="hud-station-name">STATION 7</div>
+      <div style="font-size:0.65rem;margin-top:2px;" id="hud-q-count">Question 1 of 12</div>
+    </div>
+    <div class="hud-progress" id="hud-progress"></div>
+    <div class="score-display">CREW SAVED: <span id="hud-score">0</span></div>
+  </div>
+
+  <div class="question-container">
+    <div class="station-header">
+      <div class="station-icon" id="q-station-icon">🛸</div>
+      <div class="station-info">
+        <h2 id="q-station-name">Crew Bay Alpha</h2>
+        <div class="clinical-label" id="q-clinical-label">SIRS CRITERIA & TIME ZERO</div>
+      </div>
+    </div>
+
+    <div class="scenario-box" id="q-scenario-box">
+      <div class="scenario-label">// Incoming Transmission</div>
+      <div id="q-scenario-text"></div>
+    </div>
+
+    <div id="q-bpa-mockup"></div>
+
+    <div class="question-text" id="q-text"></div>
+
+    <div class="options-grid" id="q-options"></div>
+
+    <div class="feedback-panel" id="q-feedback">
+      <div class="feedback-label" id="q-feedback-label"></div>
+      <div id="q-feedback-text"></div>
+    </div>
+
+    <div class="next-btn-wrap" id="q-next-wrap" style="display:none;">
+      <button class="btn" onclick="nextQuestion()">NEXT →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     STATION TRANSITION
+══════════════════════════════════════════════ -->
+<div id="station-transition" class="screen">
+  <div class="transition-icon" id="trans-icon">✅</div>
+  <div class="transition-title" id="trans-title">SECTION SECURED</div>
+  <div class="transition-subtitle" id="trans-subtitle">Access code fragment acquired. Proceed to next section.</div>
+  <div class="next-station-preview" id="trans-next-preview"></div>
+  <button class="btn" id="trans-btn" onclick="continueToNextStation()">PROCEED →</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     FINAL SCREEN
+══════════════════════════════════════════════ -->
+<div id="final-screen" class="screen">
+  <div class="final-title success">🚀 STATION 7 SECURED</div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:0.9rem;color:var(--text-dim);letter-spacing:2px;">All crew members stabilized. Orbit maintained.</div>
+
+  <div class="score-card">
+    <div class="big-score" id="final-score">0</div>
+    <div class="score-label">CREW MEMBERS SAVED</div>
+    <div class="score-breakdown" id="final-breakdown"></div>
+  </div>
+
+  <div class="instructor-note">
+    <strong>// INSTRUCTOR DEBRIEF NOTES</strong>
+    Review these key concepts with your group:<br>
+    1. "I'm not providing Sepsis care" suppresses for 8 hours — it is NOT a handoff tool.<br>
+    2. Blood cultures MUST be drawn before the first antibiotic is given — even if the BPA hasn't fired yet.<br>
+    3. Time Zero begins when Epic detects ≥2 SIRS criteria, lactate &gt;2, hypotension, or altered mental status.<br>
+    4. Every BPA has a suppression window — knowing these prevents both under-responding and over-clicking.<br>
+    5. The repeat lactic acid BPA tells you the first result was &gt;2 — that's a clinical data point in itself.
+  </div>
+
+  <button class="btn" onclick="restartGame()">↺ RUN DRILL AGAIN</button>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════
+// GAME DATA
+// ══════════════════════════════════════════════
+
+const stations = [
+  {
+    id: 'crew-bay-alpha',
+    icon: '🛸',
+    name: 'Crew Bay Alpha',
+    clinical: 'SIRS CRITERIA & TIME ZERO',
+    transitionTitle: 'CREW BAY ALPHA — SECURED',
+    transitionSub: 'SIRS recognition confirmed. Code fragment 1 of 4 acquired.',
+  },
+  {
+    id: 'bio-lab',
+    icon: '🧬',
+    name: 'Bio-Lab Seven',
+    clinical: 'LACTIC ACID & BLOOD CULTURES',
+    transitionTitle: 'BIO-LAB SEVEN — SECURED',
+    transitionSub: 'Specimen protocol confirmed. Code fragment 2 of 4 acquired.',
+  },
+  {
+    id: 'pharmacy',
+    icon: '💊',
+    name: 'Pharmacy Deck',
+    clinical: 'ANTIBIOTICS & IV FLUIDS',
+    transitionTitle: 'PHARMACY DECK — SECURED',
+    transitionSub: 'Treatment protocol confirmed. Code fragment 3 of 4 acquired.',
+  },
+  {
+    id: 'command',
+    icon: '🚨',
+    name: 'Command Bridge',
+    clinical: 'MD ESCALATION & VASOPRESSORS',
+    transitionTitle: 'COMMAND BRIDGE — SECURED',
+    transitionSub: 'Escalation protocol confirmed. Code fragment 4 of 4 acquired.',
+  },
+  {
+    id: 'airlock',
+    icon: '🔐',
+    name: 'The Airlock',
+    clinical: 'FINAL CHALLENGE — ESCAPE',
+    transitionTitle: null,
+  }
+];
+
+const questions = [
+  // ── STATION 0: Crew Bay Alpha — SIRS & Time Zero ──
+  {
+    stationIndex: 0,
+    scenario: "Crew member Rodriguez, 58F, is brought to Medical Bay. Biometric readings show: Heart Rate 102, Temperature 38.6°C, Respiratory Rate 22, WBC 13.2. Blood pressure is 118/76. She is alert and oriented. No lactate has been drawn yet.",
+    bpa: null,
+    question: "The ship's biometric system (KP HealthConnect) starts the Sepsis Pathway clock at 'Time Zero.' Based on these readings, has Time Zero been triggered?",
+    options: [
+      { text: "Yes — her elevated heart rate and temperature are enough to trigger Time Zero", correct: false },
+      { text: "Yes — four SIRS criteria are met, which always triggers Time Zero", correct: false },
+      { text: "No — Sepsis Time Zero requires lactate >2, hypotension, or altered mental status. Rodriguez has none of these.", correct: true },
+      { text: "No — Time Zero only triggers if the physician places a sepsis order set", correct: false },
+    ],
+    correctFeedback: "Correct! This is a critical distinction. KP HealthConnect Time Zero is specifically triggered by: lactate result >2, hypotension, and/or altered mental status from baseline. Rodriguez has an elevated HR, temp, and RR — which match the classic SIRS definition — but none of the three Time Zero triggers. The sepsis pathway clock has NOT started yet. She still warrants close monitoring, but the BPA system has not activated.",
+    wrongFeedback: "Not quite — and this is one of the most important distinctions in this training. KP HealthConnect Time Zero is NOT triggered by the classic SIRS criteria (HR, temp, RR, WBC). It specifically requires: lactate >2, hypotension, and/or altered mental status from baseline. Rodriguez has none of these. Her elevated HR and temperature are concerning and warrant monitoring, but the sepsis pathway clock has not started.",
+  },
+  {
+    stationIndex: 0,
+    scenario: "You check the patient list and see the Sepsis Time Zero column. Rodriguez has a sad red face SIRS icon with a number badge.",
+    bpa: null,
+    question: "What does the sad red face SIRS icon (most severe) indicate in KP HealthConnect?",
+    options: [
+      { text: "SIRS criteria met only", correct: false },
+      { text: "SIRS + Organ Dysfunction", correct: false },
+      { text: "SIRS + Concern for Shock", correct: true },
+      { text: "The patient has already been assessed and is stable", correct: false },
+    ],
+    correctFeedback: "Correct! The three SIRS icons escalate in severity: yellow dot (no face) = SIRS criteria met, yellow face with straight mouth = SIRS + Organ Dysfunction, sad red face = SIRS + Concern for Shock. This is the most urgent.",
+    wrongFeedback: "Not quite. The sad red face is the most severe icon: SIRS + Concern for Shock. Yellow dot (no face) = SIRS only, yellow face with straight mouth = SIRS + Organ Dysfunction. Always check which icon is showing — they tell you how serious the situation is.",
+  },
+  {
+    stationIndex: 0,
+    scenario: "You note that Time Zero was recorded at 09:15. You are reviewing the patient list at 10:20.",
+    bpa: null,
+    question: "The Sepsis Time Zero column shows '1.1' next to Rodriguez's name. What does this number mean?",
+    options: [
+      { text: "The patient has a 1.1% chance of septic shock", correct: false },
+      { text: "It has been 1.1 hours since Time Zero — 66 minutes have elapsed", correct: true },
+      { text: "The patient's lactate result was 1.1", correct: false },
+      { text: "There is 1.1 hours remaining before the pathway expires", correct: false },
+    ],
+    correctFeedback: "Correct! The number in the Sepsis Time Zero column represents hours elapsed since Time Zero. At 1.1 hours, this patient is well into the window where BPAs may be firing for overdue pathway actions.",
+    wrongFeedback: "The number shows elapsed time in hours since Time Zero — not a percentage, not a lab value. At 1.1 hours (66 minutes), the pathway actions should be underway and BPAs may be active for anything overdue.",
+  },
+
+  // ── STATION 1: Bio-Lab Seven — Lactic Acid & Blood Cultures ──
+  {
+    stationIndex: 1,
+    scenario: "It has been 65 minutes since Rodriguez's Lactic Acid was ordered. The lab has not yet updated the status to 'in process' or 'complete.'",
+    bpa: {
+      header: "Initial Lactic Acid collection missing: Patient on sepsis pathway",
+      body: "Patient is on the sepsis pathway. Lactic Acid was ordered 65 minutes ago with no collection status documented.",
+      buttons: ["Initial Lactic Acid drawn", "Specimen collection needed", "Difficult access", "I'm not providing Sepsis care"],
+    },
+    question: "The BPA above is now firing. You are actively at the bedside trying to draw the lactic acid but the patient has difficult veins. Which response is most appropriate?",
+    options: [
+      { text: "Initial Lactic Acid drawn — you're about to draw it so this is close enough", correct: false },
+      { text: "Specimen collection needed — flags that you need help getting the sample", correct: false },
+      { text: "Difficult access — honestly reflects the situation and suppresses the BPA for 20 minutes", correct: true },
+      { text: "I'm not providing Sepsis care — dismisses the alert so you can focus", correct: false },
+    ],
+    correctFeedback: "Correct! 'Difficult access' is the honest, appropriate response here. It closes the BPA while the chart is open and suppresses it for 20 minutes on reopen — giving you time to troubleshoot access without the alert constantly interrupting. 'Initial Lactic Acid drawn' should only be selected if the draw is actually complete, as it marks the task done in the Sepsis report.",
+    wrongFeedback: "'Difficult access' is the right answer. It's honest about the situation and suppresses the BPA for 20 minutes — enough time to problem-solve access. 'Initial Lactic Acid drawn' should never be selected until the draw is actually complete — it marks the task as done on the Sepsis report. And 'I'm not providing Sepsis care' suppresses for 8 hours and is not a legitimate response when you're actively trying to care for the patient.",
+  },
+  {
+    stationIndex: 1,
+    scenario: "Rodriguez's first lactic acid result came back at 2.8. The physician has ordered a repeat lactic acid. It has now been 4 hours since the repeat order was placed, and the lab status still shows 'ordered' only.",
+    bpa: {
+      header: "Repeat Lactic Acid collection missing: Patient on sepsis pathway",
+      body: "Patient is on the sepsis pathway. Repeat Lactic Acid ordered. It has been more than 3.5 hours since the order was placed with no collection documented.",
+      buttons: ["Repeat Lactic Acid drawn", "Specimen collection needed", "Difficult access", "I'm not providing Sepsis care"],
+    },
+    question: "This Repeat Lactic Acid BPA is now firing. Before you respond, what does the fact that this BPA exists at all tell you about the patient's clinical status?",
+    options: [
+      { text: "Nothing — it just means someone forgot to draw the repeat lab", correct: false },
+      { text: "The first lactic acid result was greater than 2, indicating elevated lactate", correct: true },
+      { text: "The physician suspects the patient no longer has sepsis", correct: false },
+      { text: "The patient's lactate has already normalized and the repeat is routine", correct: false },
+    ],
+    correctFeedback: "Excellent! The Repeat Lactic Acid BPA only fires when the initial lactate result was greater than 2. The BPA itself is a clinical data point — this patient has had an elevated lactate, which is a serious finding. This context should inform your urgency in completing the repeat draw.",
+    wrongFeedback: "The Repeat Lactic Acid BPA only fires when the first lactate result was greater than 2. The existence of this BPA tells you the patient had an elevated lactate result — that's an important clinical signal. Don't treat it as just a box to check; it means this patient's sepsis status requires close monitoring.",
+  },
+  {
+    stationIndex: 1,
+    scenario: "A Blood Culture BPA fires for Rodriguez. You check the MAR and notice that a pharmacy tech scanned the first antibiotic dose 10 minutes ago, but blood cultures have not yet been collected.",
+    bpa: {
+      header: "Blood Culture collection missing: Patient on sepsis pathway",
+      body: "An antibiotic was scanned for administration prior to a documented Blood Culture lab status of 'in process' or 'complete.'",
+      buttons: ["Blood culture drawn", "Specimen collection needed", "Difficult access", "I'm not providing Sepsis care"],
+    },
+    question: "This is a serious situation. What is the most important clinical principle at play here?",
+    options: [
+      { text: "Blood cultures must be drawn before the first antibiotic is given — the BPA fired because this sequence was violated", correct: true },
+      { text: "The antibiotic should be stopped immediately and restarted after cultures are drawn", correct: false },
+      { text: "Blood cultures can be drawn up to 30 minutes after the antibiotic without affecting results", correct: false },
+      { text: "The BPA is just a documentation reminder — it has no clinical significance", correct: false },
+    ],
+    correctFeedback: "Exactly right. Blood cultures must be collected BEFORE the first antibiotic is given. Antibiotics begin killing bacteria almost immediately, which can make cultures falsely negative — potentially delaying identification of the causative organism and appropriate targeted therapy. This is why the BPA fires when an antibiotic is scanned prior to a confirmed culture status.",
+    wrongFeedback: "The core principle is that blood cultures must be drawn BEFORE antibiotics are started. Once antibiotics are given, bacteria begin dying and cultures may come back falsely negative — meaning you could miss identifying the organism causing sepsis. The BPA fired specifically because an antibiotic was scanned before cultures were confirmed.",
+  },
+
+  // ── STATION 2: Pharmacy Deck — Antibiotics & IV Fluids ──
+  {
+    stationIndex: 2,
+    scenario: "An antibiotic BPA fires for crew member Torres, 44M. The antibiotic was ordered 75 minutes ago. You check the MAR — no 'Given' action is documented. Torres was taken to radiology 20 minutes ago and just returned.",
+    bpa: {
+      header: "Antibiotics ordered and not given: Patient on sepsis pathway",
+      body: "cefTRIAXone 1g IV was ordered 75 minutes ago. No 'Given' action documented on the MAR.",
+      buttons: ["Waiting for Medications", "Patient off floor", "No IV access", "Will give ASAP", "Other (See Comments)", "I'm not providing Sepsis care"],
+    },
+    question: "Torres just returned from radiology and you are about to give the antibiotic right now. Which response option is most appropriate?",
+    options: [
+      { text: "Patient off floor — that's why it wasn't given", correct: false },
+      { text: "Will give ASAP — you are literally about to give it", correct: true },
+      { text: "Waiting for Medications — the pharmacy may not have sent it yet", correct: false },
+      { text: "I'm not providing Sepsis care — you're handing off to the next nurse", correct: false },
+    ],
+    correctFeedback: "Correct! 'Will give ASAP' is the right choice when you are actively about to administer the medication. It closes the BPA while the chart is open and suppresses it for 30 minutes — enough time for you to give the antibiotic and document it on the MAR. 'Patient off floor' was true 20 minutes ago, but he's back now.",
+    wrongFeedback: "'Will give ASAP' is the right answer when you're about to administer immediately. It suppresses the BPA for 30 minutes, giving you time to give it and document. 'Patient off floor' was accurate earlier but not now. And 'I'm not providing Sepsis care' would suppress for 8 hours — which is completely inappropriate when you're standing there ready to give the medication.",
+  },
+  {
+    stationIndex: 2,
+    scenario: "An IV Fluids BPA fires for Torres. The order shows: Dextrose 5%-Lactated Ringers 100mL/hr IV CONTINUOUS, ordered 70 minutes ago. No 'New Bag' or 'Given' action is on the MAR.",
+    bpa: {
+      header: "IV Fluids ordered and not given: Patient on sepsis pathway",
+      body: "IV fluid order placed 70 minutes ago. No 'New Bag' or 'Given' action documented.",
+      buttons: ["Patient off floor", "Difficult access", "Will give ASAP", "Other (See Comments)", "I'm not providing Sepsis care"],
+    },
+    question: "You discover that the IV fluid was actually running — the night nurse hung it but documented it incorrectly and it doesn't show on the MAR. You hang a new bag and document 'New Bag.' What happens to this BPA?",
+    options: [
+      { text: "The BPA will continue to fire every 30 minutes regardless", correct: false },
+      { text: "You need to call the pharmacy to close the BPA manually", correct: false },
+      { text: "Once 'New Bag' or 'Given' is documented on the MAR for the IV fluid order, the BPA condition is resolved", correct: true },
+      { text: "You must select 'Will give ASAP' in the BPA first, then document on the MAR", correct: false },
+    ],
+    correctFeedback: "Correct! The BPA fires because no MAR action was documented. Once you document 'New Bag' on the MAR for the IV fluid order, the trigger condition no longer exists and the BPA will not refire (as long as the MAR stays current). The BPA is driven by the data — fix the data, resolve the alert.",
+    wrongFeedback: "The BPA fires because of a missing MAR action — specifically 'New Bag' or 'Given.' Once that documentation is in place, the trigger condition is resolved. The BPA system reads the MAR; if the MAR shows the fluid is running, the alert won't refire. This is why accurate, timely documentation matters beyond just compliance.",
+  },
+
+  // ── STATION 3: Command Bridge — MD Escalation & Vasopressors ──
+  {
+    stationIndex: 3,
+    scenario: "It has now been 65 minutes since Time Zero for Rodriguez. The physician has not opened her chart yet. A BPA fires.",
+    bpa: {
+      header: "The patient met severe sepsis or septic shock criteria ≥60 minutes ago.\n\nThe physician has not received the alert.\n\nThe physician must open the chart to receive the alert and review the patient.\n\nAssess the patient and notify the physician with SBAR.",
+      body: "SIRS: Heart Rate >90, Temperature >100.4\nOrgan Dysfunction: Systolic BP <90\nShock criteria: ()",
+      buttons: ["I have or will notify the physician", "I'm not providing Sepsis care"],
+    },
+    question: "You select 'I have or will notify the physician.' What happens next in KP HealthConnect?",
+    options: [
+      { text: "The BPA closes permanently and will not return", correct: false },
+      { text: "The BPA closes and is suppressed for 90 minutes, then may refire if the MD still hasn't opened the chart", correct: true },
+      { text: "The BPA closes and sends an automatic page to the physician", correct: false },
+      { text: "The BPA suppresses for 8 hours, same as all other pathway BPAs", correct: false },
+    ],
+    correctFeedback: "Correct! Selecting 'I have or will notify the physician' closes the BPA and suppresses it for 90 minutes. KP HealthConnect does NOT automatically page the physician — that's your job via SBAR. The 90-minute window means if the physician still hasn't engaged with the chart after that time, you may see this BPA again.",
+    wrongFeedback: "Selecting 'I have or will notify the physician' closes the BPA and suppresses it for 90 minutes — not permanently, and not 8 hours. Critically, KP HealthConnect does not automatically contact the physician. You must use SBAR to communicate directly. The BPA may return if the MD still hasn't opened the chart after 90 minutes.",
+  },
+  {
+    stationIndex: 3,
+    scenario: "Rodriguez's condition has worsened. A vasopressor (norepinephrine) was ordered 70 minutes ago. No 'Given' action is on the MAR. A BPA fires.",
+    bpa: {
+      header: "Vasopressors given MAR action missing: Patient on sepsis pathway",
+      body: "Vasopressor order placed more than 60 minutes ago. No 'Given' action documented on the MAR.",
+      buttons: ["Will start ASAP", "Patient off floor", "Awaiting central line access", "No longer indicated", "Other (See Comments)", "I'm not providing Sepsis care"],
+    },
+    question: "The team is still placing a central line so the vasopressor can be administered safely. Which response is most appropriate, and how long does it suppress the BPA?",
+    options: [
+      { text: "Will start ASAP — suppresses for 10 minutes", correct: false },
+      { text: "Awaiting central line access — suppresses for 30 minutes", correct: true },
+      { text: "No longer indicated — suppresses for 30 minutes", correct: false },
+      { text: "I'm not providing Sepsis care — suppresses for 8 hours", correct: false },
+    ],
+    correctFeedback: "Correct! 'Awaiting central line access' accurately reflects the clinical situation and suppresses the BPA for 30 minutes — giving the team time to complete the line placement. 'Will start ASAP' only suppresses for 10 minutes, which isn't enough time for a central line procedure. Always choose the response that most honestly matches the situation.",
+    wrongFeedback: "'Awaiting central line access' is the right answer — it's honest and suppresses for 30 minutes, which is appropriate for a central line procedure. 'Will start ASAP' only suppresses for 10 minutes — not enough for a procedure. 'No longer indicated' would be incorrect if the order is still active. And 'I'm not providing Sepsis care' (8 hours) would be a serious misuse of that option.",
+  },
+
+  // ── STATION 4: The Airlock — Final Challenge ──
+  {
+    stationIndex: 4,
+    scenario: "Final challenge. You've been caring for multiple crew members all shift. A colleague says: 'This BPA keeps firing for my patient and I already told the charge nurse. I'm going to click I'm not providing Sepsis care so it stops bugging me — that just means someone else is handling it, right?'",
+    bpa: null,
+    question: "What do you tell your colleague?",
+    options: [
+      { text: "That's correct — it routes the alert to the charge nurse and closes it for the team", correct: false },
+      { text: "That's not right. 'I'm not providing Sepsis care' suppresses the alert for 8 hours for YOU only — it doesn't notify anyone else or transfer responsibility", correct: true },
+      { text: "It's fine to use it once in a while — it suppresses for 30 minutes and gives you a break", correct: false },
+      { text: "It's only a problem if the patient is on the vasopressor pathway", correct: false },
+    ],
+    correctFeedback: "Exactly right — and this is one of the most important things to understand about the sepsis BPA system. 'I'm not providing Sepsis care' does NOT transfer responsibility, does NOT notify the charge nurse or anyone else, and does NOT appear on any handoff tool. It suppresses the alert for 8 hours for that individual user only. Misusing this option is one of the most common ways sepsis pathway actions fall through the cracks.",
+    wrongFeedback: "'I'm not providing Sepsis care' is a solo suppression — 8 hours, for that user only. It tells the system nothing about who IS responsible. It doesn't page anyone, doesn't alert the charge nurse, and doesn't show up on handoff. Its only legitimate use is when sepsis care truly does not apply to this patient (e.g., comfort care, transfer of care to a team actively managing it). Using it to quiet an inconvenient alert is dangerous.",
+  },
+  {
+    stationIndex: 4,
+    scenario: "FINAL QUESTION — CODE FRAGMENT 4 OF 4. Rodriguez has been stabilized. You are reviewing the sepsis pathway for a new crew member, Chen, 67M. His Sepsis Time Zero column shows: a yellow dot SIRS icon, timestamp 14:32, flag symbol, '0.3 hours elapsed', and 'NO' in the last column.",
+    bpa: null,
+    question: "Based on the Sepsis Time Zero column data, what do the five elements tell you? Match them correctly.",
+    options: [
+      { text: "Yellow dot = SIRS + Shock; 14:32 = Time Zero; flag = on pathway; 0.3 = lactate result; NO = not reassessed", correct: false },
+      { text: "Yellow dot = SIRS criteria met only; 14:32 = Time Zero; flag = on pathway; 0.3 = hours elapsed; NO = reassessment not yet complete", correct: true },
+      { text: "Yellow dot = SIRS + Organ Dysfunction; 14:32 = order time; flag = BPA suppressed; 0.3 = hours elapsed; NO = physician not notified", correct: false },
+      { text: "Yellow dot = SIRS criteria met only; 14:32 = Time Zero; flag = on pathway; 0.3 = hours elapsed; NO = not on the sepsis pathway", correct: false },
+    ],
+    correctFeedback: "Perfect! You've correctly read the Sepsis Time Zero column: (A) Level of care icon — yellow dot = SIRS criteria met only, (B) Date/time of Time Zero = 14:32, (C) Flag = patient is on the sepsis pathway, (D) 0.3 = hours elapsed since Time Zero (18 minutes — early in the pathway), (E) NO = reassessment not yet complete. The three icons escalate: yellow dot = SIRS only, yellow face with straight mouth = SIRS + Organ Dysfunction, sad red face = SIRS + Concern for Shock. Station 7 is secure. All crew members stable. You've earned your escape!",
+    wrongFeedback: "The five elements are: (A) yellow dot = SIRS criteria met only (not shock — that would be a sad red face), (B) 14:32 = Time Zero timestamp, (C) flag = patient is on the sepsis pathway, (D) 0.3 = hours elapsed since Time Zero (about 18 minutes), (E) NO = reassessment is not yet complete. The three icons: yellow dot = SIRS only, yellow face with straight mouth = SIRS + Organ Dysfunction, sad red face = SIRS + Concern for Shock.",
+  },
+];
+
+// ══════════════════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════════════════
+let currentQ = 0;
+let score = 0;
+let answered = false;
+let stationScores = [0,0,0,0,0];
+let stationTotals = [3,3,2,2,2];
+let pendingTransition = false;
+let nextStationIndex = 0;
+
+const TOTAL_Q = questions.length;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startGame() {
+  currentQ = 0;
+  score = 0;
+  answered = false;
+  stationScores = [0,0,0,0,0];
+  renderQuestion();
+  showScreen('question-screen');
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const station = stations[q.stationIndex];
+  answered = false;
+
+  // HUD
+  document.getElementById('hud-station-name').textContent = station.name;
+  document.getElementById('hud-q-count').textContent = `Question ${currentQ+1} of ${TOTAL_Q}`;
+  document.getElementById('hud-score').textContent = score;
+
+  // Progress pips
+  const pip = document.getElementById('hud-progress');
+  pip.innerHTML = '';
+  for (let i=0;i<TOTAL_Q;i++) {
+    const d = document.createElement('div');
+    d.className = 'progress-pip' + (i < currentQ ? ' done' : i === currentQ ? ' current' : '');
+    pip.appendChild(d);
+  }
+
+  // Station header
+  document.getElementById('q-station-icon').textContent = station.icon;
+  document.getElementById('q-station-name').textContent = station.name;
+  document.getElementById('q-clinical-label').textContent = station.clinical;
+
+  // Scenario
+  document.getElementById('q-scenario-text').textContent = q.scenario;
+
+  // BPA mockup
+  const bpaWrap = document.getElementById('q-bpa-mockup');
+  if (q.bpa) {
+    bpaWrap.innerHTML = `
+      <div class="bpa-mockup">
+        <div class="bpa-header">
+          <div class="bpa-icon">🏥</div>
+          <div><strong>Sepsis Care</strong><br><span style="font-size:0.72rem;font-weight:normal;">${q.bpa.header.replace(/\n/g,'<br>')}</span></div>
+        </div>
+        <div style="padding: 6px 14px 2px 14px; background:#1e1e1e; color:#aaa; font-size:0.85rem; font-family:'Share Tech Mono',monospace; border-top:1px solid #333;">Acknowledge Reason</div>
+        <div class="bpa-buttons">
+          ${q.bpa.buttons.map((b,i) => `<div class="bpa-btn">${b}</div>`).join('')}
+          <div class="bpa-btn" style="background:#1a4a1a;margin-left:auto;">✓ Accept</div>
+        </div>
+      </div>`;
+  } else {
+    bpaWrap.innerHTML = '';
+  }
+
+  // Question
+  document.getElementById('q-text').textContent = q.question;
+
+  // Options
+  const opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  const labels = ['A','B','C','D'];
+  q.options.forEach((o,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-label">${labels[i]}</span><span>${o.text}</span>`;
+    btn.onclick = () => selectOption(i, o.correct);
+    opts.appendChild(btn);
+  });
+
+  // Feedback
+  const fb = document.getElementById('q-feedback');
+  fb.className = 'feedback-panel';
+  fb.style.display = 'none';
+  document.getElementById('q-next-wrap').style.display = 'none';
+}
+
+function selectOption(idx, isCorrect) {
+  if (answered) return;
+  answered = true;
+
+  const opts = document.querySelectorAll('.option-btn');
+  const q = questions[currentQ];
+
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === idx) {
+      btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    } else if (q.options[i].correct) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('dimmed');
+    }
+  });
+
+  if (isCorrect) {
+    score++;
+    stationScores[q.stationIndex]++;
+    document.getElementById('hud-score').textContent = score;
+  }
+
+  const fb = document.getElementById('q-feedback');
+  const fbl = document.getElementById('q-feedback-label');
+  const fbt = document.getElementById('q-feedback-text');
+
+  if (isCorrect) {
+    fb.className = 'feedback-panel correct-fb';
+    fbl.textContent = '✓ CORRECT — CREW MEMBER STABILIZED';
+    fbt.textContent = q.correctFeedback;
+  } else {
+    fb.className = 'feedback-panel wrong-fb';
+    fbl.textContent = '✗ INCORRECT — REVIEW PROTOCOL';
+    fbt.textContent = q.wrongFeedback;
+  }
+
+  document.getElementById('q-next-wrap').style.display = 'flex';
+
+  // Update next button label if last question
+  const nextBtn = document.querySelector('#q-next-wrap .btn');
+  if (currentQ === TOTAL_Q - 1) {
+    nextBtn.textContent = 'COMPLETE MISSION →';
+  } else {
+    nextBtn.textContent = 'NEXT →';
+  }
+}
+
+function nextQuestion() {
+  const q = questions[currentQ];
+  const nextQ = questions[currentQ + 1];
+
+  // Check if we're crossing a station boundary
+  const crossingStation = !nextQ || (nextQ && nextQ.stationIndex !== q.stationIndex);
+
+  currentQ++;
+
+  if (currentQ >= TOTAL_Q) {
+    showFinalScreen();
+    return;
+  }
+
+  if (crossingStation) {
+    showTransition(q.stationIndex, nextQ.stationIndex);
+  } else {
+    renderQuestion();
+  }
+}
+
+function showTransition(fromIdx, toIdx) {
+  pendingTransition = true;
+  nextStationIndex = toIdx;
+
+  const fromStation = stations[fromIdx];
+  const toStation = stations[toIdx];
+
+  document.getElementById('trans-icon').textContent = '🔓';
+  document.getElementById('trans-title').textContent = fromStation.transitionTitle;
+  document.getElementById('trans-subtitle').textContent = fromStation.transitionSub;
+
+  document.getElementById('trans-next-preview').innerHTML = `
+    <div class="label">// NEXT SECTION</div>
+    <div class="name">${toStation.icon} ${toStation.name}</div>
+    <div class="clinical">${toStation.clinical}</div>
+  `;
+
+  showScreen('station-transition');
+}
+
+function continueToNextStation() {
+  renderQuestion();
+  showScreen('question-screen');
+}
+
+function showFinalScreen() {
+  document.getElementById('final-score').textContent = score;
+
+  const stationNames = ['Crew Bay Alpha', 'Bio-Lab Seven', 'Pharmacy Deck', 'Command Bridge', 'The Airlock'];
+  const bd = document.getElementById('final-breakdown');
+  bd.innerHTML = stationNames.map((name, i) => `
+    <div class="breakdown-row">
+      <span>${stations[i].icon} ${name}</span>
+      <span class="val">${stationScores[i]} / ${stationTotals[i]}</span>
+    </div>
+  `).join('');
+
+  showScreen('final-screen');
+}
+
+function restartGame() {
+  startGame();
+}
+</script>
+</body>
+</html>
