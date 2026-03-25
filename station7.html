@@ -884,16 +884,20 @@ const stations = [
 
 const questions = [
   // ── STATION 0: Crew Bay Alpha — SIRS & Time Zero ──
-  {
+{
     stationIndex: 0,
-    scenario: "Crew member Rodriguez, 58F, is brought to Medical Bay. Biometric readings show: Heart Rate 102, Temperature 38.6°C, Respiratory Rate 22, WBC 13.2. Blood pressure is 118/76. She is alert and oriented. No lactate has been drawn yet.",
+    scenario: "Crew member Rodriguez, 58F, is brought to Medical Bay. Biometric readings show: Heart Rate 102, Temperature 101.2°F, Respiratory Rate 18, WBC 6000/mcL. Blood pressure is 118/76. She is confused and disoriented. No lactate has been drawn yet.",
     bpa: null,
-    question: "The ship's biometric system (KP HealthConnect) starts the Sepsis Pathway clock at 'Time Zero.' Based on these readings, has Time Zero been triggered?",
+    question: "Based on these readings, has Sepsis Time Zero been triggered in KP HealthConnect?",
     options: [
-      { text: "Yes — her elevated heart rate and temperature are enough to trigger Time Zero", correct: false },
-      { text: "Yes — four SIRS criteria are met, which always triggers Time Zero", correct: false },
-      { text: "No — Sepsis Time Zero requires lactate >2, hypotension, or altered mental status. Rodriguez has none of these.", correct: true },
+      { text: "Yes — she meets 2 SIRS criteria (HR and temperature) and has altered mental status from baseline", correct: true },
+      { text: "No — she only meets 2 SIRS criteria, and all 4 are required to trigger Time Zero", correct: false },
+      { text: "No — Time Zero cannot trigger without a lactate result on file", correct: false },
       { text: "No — Time Zero only triggers if the physician places a sepsis order set", correct: false },
+    ],
+    correctFeedback: "Correct! KP HealthConnect triggers Sepsis Time Zero when it recognizes 2 or more SIRS criteria AND/OR a lactate >2, hypotension, or altered mental status from baseline. Rodriguez meets 2 SIRS criteria (HR >90 and Temp >100.4°F) plus altered mental status — Time Zero has started and the pathway clock is running.",
+    wrongFeedback: "Time Zero has been triggered. KP HealthConnect requires 2 or more SIRS criteria plus a lactate >2, hypotension, and/or altered mental status from baseline. Rodriguez meets 2 SIRS criteria (HR >90, Temp >100.4°F) and is confused and disoriented — that is altered mental status. All four SIRS criteria are not required, a lactate result is not needed to start the clock, and the physician does not need to place an order set for Time Zero to activate.",
+  },
     ],
     correctFeedback: "Correct! This is a critical distinction. KP HealthConnect Time Zero is specifically triggered by: lactate result >2, hypotension, and/or altered mental status from baseline. Rodriguez has an elevated HR, temp, and RR — which match the classic SIRS definition — but none of the three Time Zero triggers. The sepsis pathway clock has NOT started yet. She still warrants close monitoring, but the BPA system has not activated.",
     wrongFeedback: "Not quite — and this is one of the most important distinctions in this training. KP HealthConnect Time Zero is NOT triggered by the classic SIRS criteria (HR, temp, RR, WBC). It specifically requires: lactate >2, hypotension, and/or altered mental status from baseline. Rodriguez has none of these. Her elevated HR and temperature are concerning and warrant monitoring, but the sepsis pathway clock has not started.",
