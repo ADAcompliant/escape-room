@@ -234,7 +234,17 @@
     flex-wrap: wrap;
     justify-content: center;
     max-width: 720px;
+	margin: 0 auto;
   }
+	.station-map-heading {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+	font-weight: 900;
+    color: var(--plasma-blue);
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
 
   .map-station {
     background: rgba(13,27,42,0.9);
@@ -711,47 +721,46 @@
 
   <div class="briefing-panel">
     <h3>// Mission Briefing</h3>
-    <p>You are the senior nurse on duty in <strong>Station 7's Medical Bay</strong>. Station 7's primary AI — a next-generation clinical monitoring system far more advanced than standard protocols — has gone offline. The medical bay has automatically fallen back to its baseline alert system: <strong>KP HealthConnect's Sepsis Best Practice Alert (BPA) system</strong>. It will flag overdue actions for any crew member on the sepsis pathway — but only if you know how to interpret its alerts and respond correctly. Without it, crew members showing early signs of sepsis could deteriorate quickly! </p>
-    <p class="mt-4">Your mission: work through each Medical Bay section, interpret the clinical situation correctly, and take the right action. Earn access codes by answering correctly. Use all codes to unlock the emergency exit before Station 7 loses orbit.</p>
-
-    <div class="divider mt-4"></div>
-    <h3 class="mt-4">// Station Map</h3>
+    <p>You are the senior nurse on duty in <strong>Station 7's Medical Bay</strong>. Station 7's primary AI — a next-generation clinical monitoring system far more advanced than today's systems — has gone offline. The medical bay has automatically defaulted to its baseline alert system: <strong>KP HealthConnect's Sepsis Best Practice Alert (BPA) system</strong>. It will flag overdue actions for any crew member on the sepsis pathway — but only if you know how to interpret its alerts and respond correctly. Without it, crew members showing early signs of sepsis could deteriorate quickly! </p>
+    <p class="mt-4">Your mission: work through each Medical Bay section, interpret the clinical situation correctly, and take the right action to increase the lives you've saved!</p>
   </div>
-
-  <div class="station-map">
-    <div class="map-station">
-      <span class="emoji">🛸</span>
-      Crew Bay Alpha<br>
-      <span class="legend-clinical">SIRS & Time Zero</span>
+<div style="width:100%; text-align:center;">
+    <div class="station-map-heading">// Station Map</div>
+    <div class="station-map">
+        <div class="map-station">
+            <span class="emoji">🛸</span>
+            Crew Bay Alpha<br>
+            <span class="legend-clinical">SIRS & Time Zero</span>
+        </div>
+        <div class="map-arrow">➤</div>
+        <div class="map-station">
+            <span class="emoji">🧬</span>
+            Bio-Lab Seven<br>
+            <span class="legend-clinical">Lactic Acid & Blood Cultures</span>
+        </div>
+        <div class="map-arrow">➤</div>
+        <div class="map-station">
+            <span class="emoji">💊</span>
+            Pharmacy Deck<br>
+            <span class="legend-clinical">Antibiotics & IV Fluids</span>
+        </div>
+        <div class="map-arrow">➤</div>
+        <div class="map-station">
+            <span class="emoji">🚨</span>
+            Command Bridge<br>
+            <span class="legend-clinical">MD Escalation & Vasopressors</span>
+        </div>
+        <div class="map-arrow">➤</div>
+        <div class="map-station">
+            <span class="emoji">🔐</span>
+            The Airlock<br>
+            <span class="legend-clinical">Final Challenge — Escape!</span>
+        </div>
     </div>
-    <div class="map-arrow">➤</div>
-    <div class="map-station">
-      <span class="emoji">🧬</span>
-      Bio-Lab Seven<br>
-      <span class="legend-clinical">Lactic Acid & Blood Cultures</span>
-    </div>
-    <div class="map-arrow">➤</div>
-    <div class="map-station">
-      <span class="emoji">💊</span>
-      Pharmacy Deck<br>
-      <span class="legend-clinical">Antibiotics & IV Fluids</span>
-    </div><br>
-    <div class="map-arrow">➤</div>
-    <div class="map-station">
-      <span class="emoji">🚨</span>
-      Command Bridge<br>
-      <span class="legend-clinical">MD Escalation & Vasopressors</span>
-    </div>
-    <div class="map-arrow">➤</div>
-    <div class="map-station">
-      <span class="emoji">🔐</span>
-      The Airlock<br>
-      <span class="legend-clinical">Final Challenge — Escape!</span>
-    </div>
-  </div>
-
-  <button class="btn" onclick="startGame()">▶ INITIATE PROTOCOL</button>
 </div>
+
+<button class="btn" onclick="startGame()">▶ INITIATE PROTOCOL</button>
+	</div>
 
 
 <!-- ══════════════════════════════════════════════
@@ -1184,7 +1193,7 @@ function renderQuestion() {
   // Feedback
   const fb = document.getElementById('q-feedback');
   fb.className = 'feedback-panel';
-  fb.style.display = 'none';
+  fb.style.display = '';
   document.getElementById('q-next-wrap').style.display = 'none';
 }
 
