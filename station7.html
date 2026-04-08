@@ -1,4 +1,3 @@
-My Drive
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +5,9 @@ My Drive
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Outbreak on Station 7</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap');*/
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+
 
   :root {
     --space-black: #050a0f;
@@ -31,8 +32,8 @@ My Drive
 
   body {
     background: var(--space-black);
-    color: var(--text-primary);
-    font-family: 'Exo 2', sans-serif;
+    color: #D0D0D0;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -160,8 +161,9 @@ My Drive
   }
 
   .subtitle {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: clamp(0.7rem, 2vw, 1rem);
+	font-weight: 900;
     color: var(--text-dim);
     letter-spacing: 6px;
     text-transform: uppercase;
@@ -169,12 +171,13 @@ My Drive
 
   .alert-banner {
     background: linear-gradient(135deg, rgba(255,45,45,0.15), rgba(255,184,0,0.1));
-    border: 1px solid rgba(255,45,45,0.4);
+    border: 2px solid rgba(255,45,45,0.4);
     border-radius: 4px;
     padding: 16px 28px;
     max-width: 680px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
+	font-weight: 900;
     color: var(--alert-amber);
     letter-spacing: 1px;
     animation: flicker 4s ease-in-out infinite;
@@ -218,7 +221,7 @@ My Drive
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
   }
   .legend-arrow { color: var(--text-dim); }
@@ -238,7 +241,7 @@ My Drive
     border: 1px solid var(--dim-blue);
     border-radius: 4px;
     padding: 10px 16px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
     color: var(--text-dim);
     text-align: center;
@@ -302,7 +305,7 @@ My Drive
   }
 
   .hud-left {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.75rem;
     color: var(--text-dim);
   }
@@ -333,7 +336,7 @@ My Drive
   }
 
   .score-display {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     color: var(--text-dim);
   }
@@ -370,7 +373,7 @@ My Drive
     margin-bottom: 4px;
   }
   .station-info .clinical-label {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.72rem;
     color: var(--alert-amber);
     letter-spacing: 3px;
@@ -383,13 +386,13 @@ My Drive
     border-left: 3px solid var(--alert-amber);
     border-radius: 4px;
     padding: 18px 22px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.82rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
     line-height: 1.7;
     color: #c8e8d0;
   }
   .scenario-box .scenario-label {
-    font-size: 0.65rem;
+    font-size: 1rem;
     color: var(--alert-amber);
     letter-spacing: 4px;
     text-transform: uppercase;
@@ -399,28 +402,29 @@ My Drive
   /* Epic BPA mockup */
   .bpa-mockup {
     background: #1a1a1a;
-    border: 2px solid #444;
-    border-radius: 6px;
     overflow: hidden;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.8rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
+	font-weight: 700;
+    font-size: 3rem;
   }
   .bpa-header {
     background: #d4a017;
-    padding: 10px 14px;
+    padding-top: 10px;
+    padding-right: 14px;
+    padding-left: 14px;
+    padding-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 10px;
     color: #1a1a1a;
-    font-weight: bold;
-    font-size: 0.85rem;
+	font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif;
+    font-weight: 700;    
+	font-size: 0.9rem;
   }
   .bpa-icon {
-    width: 28px;
-    height: 28px;
-    background: #1a1a1a;
-    border-radius: 50%;
+    width: 168px;
+    height: 56px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -446,18 +450,17 @@ My Drive
     flex-wrap: wrap;
     gap: 6px;
     padding: 10px 14px;
-    background: #1e1e1e;
-    border-top: 1px solid #333;
+    background: #F0EAB6;
   }
   .bpa-btn {
-    background: #2a5298;
-    color: white;
+    background: #6BD6F1;
+    color: #000000;
     border: none;
     padding: 5px 10px;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     border-radius: 3px;
     cursor: default;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, "sans-serif";
   }
   .bpa-btn.red { background: #8b2020; }
 
@@ -569,7 +572,7 @@ My Drive
     text-shadow: 0 0 20px rgba(0,255,136,0.5);
   }
   .transition-subtitle {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
     color: var(--text-dim);
     letter-spacing: 2px;
@@ -583,7 +586,7 @@ My Drive
     text-align: center;
   }
   .next-station-preview .label {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
     color: var(--text-dim);
     letter-spacing: 4px;
@@ -600,7 +603,7 @@ My Drive
     font-size: 0.78rem;
     color: var(--alert-amber);
     margin-top: 4px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     letter-spacing: 2px;
   }
 
@@ -633,7 +636,7 @@ My Drive
     text-shadow: var(--correct-glow);
   }
   .score-card .score-label {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.75rem;
     color: var(--text-dim);
     letter-spacing: 3px;
@@ -651,7 +654,7 @@ My Drive
   .breakdown-row {
     display: flex;
     justify-content: space-between;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.78rem;
     color: var(--text-dim);
   }
@@ -662,7 +665,7 @@ My Drive
     border-radius: 6px;
     padding: 16px 22px;
     max-width: 680px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.75rem;
     color: var(--alert-amber);
     line-height: 1.7;
@@ -676,7 +679,7 @@ My Drive
   ::-webkit-scrollbar-thumb { background: var(--dim-blue); border-radius: 3px; }
 
   /* Utility */
-  .text-mono { font-family: 'Share Tech Mono', monospace; }
+  .text-mono { font-family: 'JetBrains Mono', monospace; }
   .text-dim { color: var(--text-dim); }
   .mt-4 { margin-top: 16px; }
   .divider { width: 100%; height: 1px; background: var(--panel-border); }
@@ -703,7 +706,7 @@ My Drive
   <div class="subtitle">Medical Bay Emergency Protocol // Outbreak Containment</div>
 
   <div class="alert-banner">
-    ⚠ CRITICAL ALERT: Primary AI Clinical Decision System offline. Manual protocol engagement required. Crew safety depends on your expertise.
+    ⚠ CRITICAL ALERT: <br>Primary AI Clinical Decision System offline. Manual protocol engagement required. Crew safety depends on your expertise.
   </div>
 
   <div class="briefing-panel">
@@ -813,7 +816,7 @@ My Drive
 ══════════════════════════════════════════════ -->
 <div id="final-screen" class="screen">
   <div class="final-title success">🚀 STATION 7 SECURED</div>
-  <div style="font-family:'Share Tech Mono',monospace;font-size:0.9rem;color:var(--text-dim);letter-spacing:2px;">All crew members stabilized. Orbit maintained.</div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--text-dim);letter-spacing:2px;">All crew members stabilized. Orbit maintained.</div>
 
   <div class="score-card">
     <div class="big-score" id="final-score">0</div>
@@ -833,7 +836,6 @@ My Drive
 
   <button class="btn" onclick="restartGame()">↺ RUN DRILL AGAIN</button>
 </div>
-
 
 <script>
 // ══════════════════════════════════════════════
@@ -886,7 +888,7 @@ const questions = [
   // ── STATION 0: Crew Bay Alpha — SIRS & Time Zero ──
 {
     stationIndex: 0,
-    scenario: "Crew member Rodriguez, 58F, is brought to Medical Bay. Biometric readings show: Heart Rate 102, Temperature 101.2°F, Respiratory Rate 18, WBC 6000/mcL. Blood pressure is 118/76. She is confused and disoriented. No lactate has been drawn yet.",
+    scenario: "Crew member Rodriguez, 58F, is brought to Medical Bay. Biometric readings show: Heart Rate 102, Temperature 101.2°F, Respiratory Rate 18, WBC 6.0, Blood pressure is 118/76. She is confused and disoriented. No lactate has been drawn yet.",
     bpa: null,
     question: "Based on these readings, has Sepsis Time Zero been triggered in KP HealthConnect?",
     options: [
@@ -900,13 +902,13 @@ const questions = [
   },
   {
     stationIndex: 0,
-    scenario: "You check the patient list and see the Sepsis Time Zero column. Rodriguez has a sad red face SIRS icon with a number badge.",
+    scenario: "You check the patient list and see the Sepsis Time Zero column. Rodriguez has a yellow neutral face SIRS icon with a number badge.",
     bpa: null,
     question: "What does the sad red face SIRS icon (most severe) indicate in KP HealthConnect?",
     options: [
       { text: "SIRS criteria met only", correct: false },
-      { text: "SIRS + Organ Dysfunction", correct: false },
-      { text: "SIRS + Concern for Shock", correct: true },
+      { text: "SIRS + Organ Dysfunction", correct: true },
+      { text: "SIRS + Concern for Shock", correct: false },
       { text: "The patient has already been assessed and is stable", correct: false },
     ],
     correctFeedback: "Correct! The three SIRS icons escalate in severity: yellow dot (no face) = SIRS criteria met, yellow face with straight mouth = SIRS + Organ Dysfunction, sad red face = SIRS + Concern for Shock. This is the most urgent.",
@@ -966,7 +968,7 @@ const questions = [
   },
   {
     stationIndex: 1,
-    scenario: "A Blood Culture BPA fires for Rodriguez. You check the MAR and notice that a pharmacy tech scanned the first antibiotic dose 10 minutes ago, but blood cultures have not yet been collected.",
+    scenario: "A Blood Culture BPA fires for Rodriguez. You check the MAR and see that the first antibiotic dose was scanned 10 minutes ago, but blood cultures have not yet been collected.",
     bpa: {
       header: "Blood Culture collection missing: Patient on sepsis pathway",
       body: "An antibiotic was scanned for administration prior to a documented Blood Culture lab status of 'in process' or 'complete.'",
@@ -1147,17 +1149,17 @@ function renderQuestion() {
 
   // BPA mockup
   const bpaWrap = document.getElementById('q-bpa-mockup');
-  if (q.bpa) {
+ if (q.bpa) {
     bpaWrap.innerHTML = `
       <div class="bpa-mockup">
         <div class="bpa-header">
-          <div class="bpa-icon">🏥</div>
-          <div><strong>Sepsis Care</strong><br><span style="font-size:0.72rem;font-weight:normal;">${q.bpa.header.replace(/\n/g,'<br>')}</span></div>
+          <div class="bpa-icon"><img src="Sepsis Watch logo.png" style="width:100%; height:100%; object-fit:contain;"></div>
+          <div><span>${q.bpa.header.replace(/\n/g,'<br>')}</span></div>
         </div>
-        <div style="padding: 6px 14px 2px 14px; background:#1e1e1e; color:#aaa; font-size:0.85rem; font-family:'Share Tech Mono',monospace; border-top:1px solid #333;">Acknowledge Reason</div>
+        <div style="padding: 20px 16px 10px; background:#F0EAB6; color:#000000; font-size:0.9rem; font-family:Arial, Verdana, sans-serif; font-weight:bold;">Acknowledge Reason</div>
         <div class="bpa-buttons">
           ${q.bpa.buttons.map((b,i) => `<div class="bpa-btn">${b}</div>`).join('')}
-          <div class="bpa-btn" style="background:#1a4a1a;margin-left:auto;">✓ Accept</div>
+          <div class="bpa-btn" style="background:#D0D0D0;margin-left:auto;">✓ Accept</div>
         </div>
       </div>`;
   } else {
