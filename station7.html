@@ -121,14 +121,14 @@
   .crt-flicker {
     position: fixed;
     inset: 0;
-    background: rgba(0,200,255,0.015);
-    animation: crt-flicker-anim 8s ease-in-out infinite;
+    background: rgba(0,200,255,0.1);
+    animation: crt-flicker-anim 2s ease-in-out infinite;
     pointer-events: none;
     z-index: 3;
   }
   @keyframes crt-flicker-anim {
     0%,100%,94%,96% { opacity: 1; }
-    100% { opacity: 10; }
+    95% { opacity: 0.3; }
     95.5% { opacity: 1; }
   }
 
@@ -225,7 +225,7 @@
     font-size: 0.78rem;
   }
   .legend-arrow { color: var(--text-dim); }
-  .legend-clinical { color: var(--alert-amber); font-size: 0.72rem; }
+  .legend-clinical { color: var(--alert-amber); }
 
   .station-map {
     display: flex;
@@ -240,9 +240,9 @@
     background: rgba(13,27,42,0.9);
     border: 1px solid var(--dim-blue);
     border-radius: 4px;
-    padding: 10px 16px;
+    padding: 10px 6px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
+    font-size: 0.9rem;
     color: var(--text-dim);
     text-align: center;
   }
