@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0096)file:///C:/Users/C032484/OneDrive%20-%20Kaiser%20Permanente/Documents/EscapeRmSite/station7.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Outbreak on Station 7</title>
 <style>
@@ -479,7 +479,6 @@
     line-height: 1.7;
     color: var(--text-primary);
     font-weight: 600;
-	font-family: 'Exo 2', monospace;
   }
 
   .options-grid {
@@ -500,7 +499,7 @@
     align-items: flex-start;
     gap: 14px;
     font-family: 'Exo 2', sans-serif;
-    font-size: 1.1rem;
+    font-size: 0.92rem;
     color: var(--text-primary);
     line-height: 1.5;
     width: 100%;
@@ -712,7 +711,7 @@
 <!-- ══════════════════════════════════════════════
      INTRO SCREEN
 ══════════════════════════════════════════════ -->
-<div id="intro" class="screen">
+<div id="intro" class="screen active">
   <div class="station-logo">STATION 7</div>
   <div class="subtitle">Medical Bay Emergency Protocol // Outbreak Containment</div>
 
@@ -731,25 +730,25 @@
         <div class="map-station">
             <span class="emoji">🛸</span>
             Crew Bay Alpha<br>
-            <span class="legend-clinical">SIRS &amp; Time Zero</span>
+            <span class="legend-clinical">SIRS & Time Zero</span>
         </div>
         <div class="map-arrow">➤</div>
         <div class="map-station">
             <span class="emoji">🧬</span>
             Bio-Lab Seven<br>
-            <span class="legend-clinical">Lactic Acid &amp; Blood Cultures</span>
+            <span class="legend-clinical">Lactic Acid & Blood Cultures</span>
         </div>
         <div class="map-arrow">➤</div>
         <div class="map-station">
             <span class="emoji">💊</span>
             Pharmacy Deck<br>
-            <span class="legend-clinical">Antibiotics &amp; IV Fluids</span>
+            <span class="legend-clinical">Antibiotics & IV Fluids</span>
         </div>
         <div class="map-arrow">➤</div>
         <div class="map-station">
             <span class="emoji">🚨</span>
             Command Bridge<br>
-            <span class="legend-clinical">MD Escalation &amp; Vasopressors</span>
+            <span class="legend-clinical">MD Escalation & Vasopressors</span>
         </div>
         <div class="map-arrow">➤</div>
         <div class="map-station">
@@ -767,13 +766,13 @@
 <!-- ══════════════════════════════════════════════
      QUESTION SCREEN
 ══════════════════════════════════════════════ -->
-<div id="question-screen" class="screen active">
+<div id="question-screen" class="screen">
   <div class="hud-bar">
     <div class="hud-left">
-      <div class="hud-station-name" id="hud-station-name">Crew Bay Alpha</div>
+      <div class="hud-station-name" id="hud-station-name">STATION 7</div>
       <div style="font-size:0.65rem;margin-top:2px;" id="hud-q-count">Question 1 of 12</div>
     </div>
-    <div class="hud-progress" id="hud-progress"><div class="progress-pip current"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div><div class="progress-pip"></div></div>
+    <div class="hud-progress" id="hud-progress"></div>
     <div class="score-display">CREW SAVED: <span id="hud-score">0</span></div>
   </div>
 
@@ -782,20 +781,20 @@
       <div class="station-icon" id="q-station-icon">🛸</div>
       <div class="station-info">
         <h2 id="q-station-name">Crew Bay Alpha</h2>
-        <div class="clinical-label" id="q-clinical-label">SIRS CRITERIA &amp; TIME ZERO</div>
+        <div class="clinical-label" id="q-clinical-label">SIRS CRITERIA & TIME ZERO</div>
       </div>
     </div>
 
     <div class="scenario-box" id="q-scenario-box">
       <div class="scenario-label">// Incoming Transmission</div>
-      <div id="q-scenario-text">Crew member Rodriguez, 58F, is brought to Medical Bay. Biometric readings show: Heart Rate 102, Temperature 101.2°F, Respiratory Rate 18, WBC 6.0, Blood pressure is 118/76. She is confused and disoriented. No lactate has been drawn yet.</div>
+      <div id="q-scenario-text"></div>
     </div>
 
     <div id="q-bpa-mockup"></div>
 
-    <div class="question-text" id="q-text">Based on these readings, has Sepsis Time Zero been triggered in KP HealthConnect?</div>
+    <div class="question-text" id="q-text"></div>
 
-    <div class="options-grid" id="q-options"><button class="option-btn"><span class="option-label">A</span><span>Yes — she meets 2 SIRS criteria (HR and temperature) and has altered mental status from baseline</span></button><button class="option-btn"><span class="option-label">B</span><span>No — she only meets 2 SIRS criteria, and all 4 are required to trigger Time Zero</span></button><button class="option-btn"><span class="option-label">C</span><span>No — Time Zero cannot trigger without a lactate result on file</span></button><button class="option-btn"><span class="option-label">D</span><span>No — Time Zero only triggers if the physician places a sepsis order set</span></button></div>
+    <div class="options-grid" id="q-options"></div>
 
     <div class="feedback-panel" id="q-feedback">
       <div class="feedback-label" id="q-feedback-label"></div>
@@ -826,7 +825,7 @@
 ══════════════════════════════════════════════ -->
 <div id="final-screen" class="screen">
   <div class="final-title success">🚀 STATION 7 SECURED</div>
-  <div style="font-family:&#39;JetBrains Mono&#39;,monospace;font-size:0.9rem;color:var(--text-dim);letter-spacing:2px;">All crew members stabilized. Orbit maintained.</div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--text-dim);letter-spacing:2px;">All crew members stabilized. Orbit maintained.</div>
 
   <div class="score-card">
     <div class="big-score" id="final-score">0</div>
@@ -1312,6 +1311,5 @@ function restartGame() {
   startGame();
 }
 </script>
-
-
-</body></html>
+</body>
+</html>
