@@ -479,6 +479,7 @@
     line-height: 1.7;
     color: var(--text-primary);
     font-weight: 600;
+	font-family: 'Exo 2', monospace;
   }
 
   .options-grid {
@@ -499,7 +500,7 @@
     align-items: flex-start;
     gap: 14px;
     font-family: 'Exo 2', sans-serif;
-    font-size: 0.92rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
     line-height: 1.5;
     width: 100%;
@@ -838,7 +839,7 @@
     Review these key concepts with your group:<br>
     1. "I'm not providing Sepsis care" suppresses for 8 hours — it is NOT a handoff tool.<br>
     2. Blood cultures MUST be drawn before the first antibiotic is given — even if the BPA hasn't fired yet.<br>
-    3. Time Zero begins when Epic detects ≥2 SIRS criteria, lactate &gt;2, hypotension, or altered mental status.<br>
+    3. Time Zero begins when KP HealthConnect detects ≥2 SIRS criteria, lactate &gt;2, hypotension, or altered mental status.<br>
     4. Every BPA has a suppression window — knowing these prevents both under-responding and over-clicking.<br>
     5. The repeat lactic acid BPA tells you the first result was &gt;2 — that's a clinical data point in itself.
   </div>
@@ -911,17 +912,17 @@ const questions = [
   },
   {
     stationIndex: 0,
-    scenario: "You check the patient list and see the Sepsis Time Zero column. Rodriguez has a yellow neutral face SIRS icon with a number badge.",
+    scenario: "You check the patient list and see the Sepsis Time Zero column. Rodriguez has a yellow face with neutral mouth SIRS icon and a number badge.",
     bpa: null,
-    question: "What does the yellow neutral face SIRS icon indicate in KP HealthConnect?",
+    question: "What does yellow face with neutral mouth SIRS icon indicate in KP HealthConnect?",
     options: [
       { text: "SIRS criteria met only", correct: false },
       { text: "SIRS + Organ Dysfunction", correct: true },
       { text: "SIRS + Concern for Shock", correct: false },
       { text: "The patient has already been assessed and is stable", correct: false },
     ],
-    correctFeedback: "Correct! The three SIRS icons escalate in severity: yellow dot (no face) = SIRS criteria met, yellow face with straight mouth = SIRS + Organ Dysfunction, sad red face = SIRS + Concern for Shock. This is the most urgent.",
-    wrongFeedback: "Not quite. The sad red face is the most severe icon: SIRS + Concern for Shock. Yellow dot (no face) = SIRS only, yellow face with straight mouth = SIRS + Organ Dysfunction. Always check which icon is showing — they tell you how serious the situation is.",
+    correctFeedback: "Correct! The three SIRS icons escalate in severity: yellow dot (no face) = SIRS criteria met, yellow face with neutral mouth = SIRS + Organ Dysfunction, sad red face = SIRS + Concern for Shock. This is the most urgent.",
+    wrongFeedback: "Not quite. The sad red face is the most severe icon: SIRS + Concern for Shock. Yellow dot (no face) = SIRS only, yellow face with neutral mouth = SIRS + Organ Dysfunction. Always check which icon is showing — they tell you how serious the situation is.",
   },
   {
     stationIndex: 0,
